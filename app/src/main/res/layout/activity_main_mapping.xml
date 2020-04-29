@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainMapping">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/newmap"
+            android:layout_width="161dp"
+            android:layout_height="49dp"
+            android:background="@android:color/holo_green_light"
+            android:onClick="onCreateMapButtonClick"
+            android:text="@string/create_new_map"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"/>
+
+        <TextView
+            android:id="@+id/ExistingMapsListTextView"
+            android:layout_width="241dp"
+            android:layout_height="45dp"
+            android:text="@string/choose_from_existing_maps"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="19sp" />
+
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"/>
+        <Spinner
+            android:id="@+id/LoadMapSpinner"
+            android:layout_width="234dp"
+            android:layout_height="45dp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"/>
+        <Button
+            android:id="@+id/loadmap"
+            android:layout_width="161dp"
+            android:layout_height="49dp"
+            android:background="@android:color/holo_green_light"
+            android:onClick="onLoadMapButtonClick"
+            android:text="@string/loadmap"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

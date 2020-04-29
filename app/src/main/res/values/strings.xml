@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">IndoorNav</string>
+    <string name="navigation">Navigation</string>
+    <string name="mapping">Mapping</string>
+    <string name="save_map">Save map</string>
+    <string name="join_node">Join Node</string>
+    <string name="create_node">Create Node</string>
+    <string name="create_new_map">Create New Map</string>
+    <string name="loadmap">Load Map</string>
+    <string name="choose_from_existing_maps">Choose From Existing Maps</string>
+    <string name="enter_the_map_name">Enter the map name</string>
+    <string name="send">Send</string>
+    <string name="Proceed">Proceed</string>
+    <string name="Cancel">Cancel</string>
+    <string name="enter_node_name">Enter Node Name</string>
+    <string name="enter_node_description">Enter Node Description</string>
+    <string name="startnavigation">Start Navigation</string>
+    <string name="choose_destination_node">Choose Destination Node</string>
+    <string name="choose_source_node">Choose Source Node</string>
 </resources>
