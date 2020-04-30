@@ -52,7 +52,7 @@ public class MainNavigation extends AppCompatActivity {
         try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
             String line = reader.readLine();
             while (line != null) {
-                maps.add(new String(line));
+                maps.add(line);
                 line = reader.readLine();
             }
         } catch (IOException e) {
@@ -104,7 +104,9 @@ public class MainNavigation extends AppCompatActivity {
         final ArrayList<String> nodesNames = new ArrayList<>();
         nodesNames.add("Select");
         for(Node node : graph.getNodes()){
-            nodesNames.add(node.getNodeName());
+            if(!node.getBreadcrumb()) {
+                nodesNames.add(node.getNodeName());
+            }
         }
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice,nodesNames);
         dataAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);

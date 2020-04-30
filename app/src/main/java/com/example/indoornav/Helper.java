@@ -8,6 +8,7 @@ public class Helper {
     public static final String Edges                        = "Edges";
     public static final String Nodes                        = "Nodes";
     public static final String BSSID                        = "BSSID";
+    public static final String SSID                         = "SSID";
     public static final String RSSI                         = "RSSI";
     public static final String TimeStamp                    = "TimeStamp";
     public static final String RSSICalculator_Broadcast     = "RSSSICalculator";

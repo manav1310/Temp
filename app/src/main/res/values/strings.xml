@@ -17,4 +17,5 @@
     <string name="startnavigation">Start Navigation</string>
     <string name="choose_destination_node">Choose Destination Node</string>
     <string name="choose_source_node">Choose Source Node</string>
+    <string name="check_if_breadcrumb_node">check if breadcrumb node</string>
 </resources>

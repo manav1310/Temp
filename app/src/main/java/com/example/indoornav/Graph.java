@@ -1,5 +1,7 @@
 package com.example.indoornav;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 
@@ -104,6 +106,7 @@ public class Graph {
         JsonArray nodesJsonArray = new JsonArray();
         for(Node node : nodes) {
             nodesJsonArray.add(gson.toJson(node));
+            Log.d("node",gson.toJson(node));
         }
         return nodesJsonArray;
     }

@@ -13,11 +13,12 @@ public class Node {
     private String nodeName;
     private String nodeDescription;
     private Map<String, Integer> wifi = new HashMap<String, Integer>();
+    private Boolean isBreadcrumb;
 
     public Node(JSONObject jsonObject) throws JSONException {
-        Gson gson = new Gson();
         this.nodeName = jsonObject.getString("nodeName");
         this.nodeDescription = jsonObject.getString("nodeDescription");
+        this.isBreadcrumb = jsonObject.getBoolean("isBreadcrumb");
         try {
             JSONObject wifiJSONObject = jsonObject.getJSONObject("wifi");
             Iterator<String> keys = wifiJSONObject.keys();
@@ -28,7 +29,8 @@ public class Node {
         }catch (JSONException ignored) { ; }
     }
 
-    public Node(String nodeName,String nodeDescription,Map<String, Integer> wifi){
+    public Node(String nodeName,String nodeDescription,Map<String, Integer> wifi,Boolean isBreadcrumb){
+        this.isBreadcrumb = isBreadcrumb;
         this.nodeName = nodeName;
         this.nodeDescription = nodeDescription;
         this.wifi = wifi;
@@ -56,5 +58,13 @@ public class Node {
 
     public void setNodeDescription(String nodeDescription) {
         this.nodeDescription = nodeDescription;
+    }
+
+    public Boolean getBreadcrumb() {
+        return isBreadcrumb;
+    }
+
+    public void setBreadcrumb(Boolean breadcrumb) {
+        isBreadcrumb = breadcrumb;
     }
 }

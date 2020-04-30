@@ -1,6 +1,7 @@
 package com.example.indoornav;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +14,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JoinNode extends AppCompatActivity {
+public class JoinNode extends AppCompatActivity implements ProceedFragment.NoticeDialogListener{
 
     private boolean isSourceNodeSelected = false;
     private boolean isDestinationNodeSelected = false;
@@ -29,25 +30,31 @@ public class JoinNode extends AppCompatActivity {
     @Override
     public void onResume(){
         List<String> nodes = new ArrayList<>();
-        nodes.add(0,"");
+        nodes.add(0,"Select");
         for( Node node: Graph.getInstance().getNodes()){
-            nodes.add(node.getNodeName());
+            if(!node.getBreadcrumb()) {
+                nodes.add(node.getNodeName());
+            }
         }
         Spinner firstNodeSpinner = (Spinner) findViewById(R.id.StartNodeSpinner);
         Spinner secondNodeSpinner = (Spinner) findViewById(R.id.DestinationNodeSpinner);
 
-        ArrayAdapter<String> nodeListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, nodes);
-        nodeListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> nodeListAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice, nodes);
+        nodeListAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         firstNodeSpinner.setAdapter(nodeListAdapter);
         secondNodeSpinner.setAdapter(nodeListAdapter);
         firstNodeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                isSourceNodeSelected = true;
-                sourceNode = parent.getAdapter().getItem(position).toString();
-                Toast.makeText(getApplicationContext(), "selected : " + sourceNode,Toast.LENGTH_LONG).show();
+                if (position > 0) {
+                    isSourceNodeSelected = true;
+                    sourceNode = parent.getAdapter().getItem(position).toString();
+                    Toast.makeText(getApplicationContext(), "selected : " + sourceNode, Toast.LENGTH_LONG).show();
+                }else{
+                    isSourceNodeSelected = false;
+                    Toast.makeText(getApplicationContext(),"select source", Toast.LENGTH_SHORT).show();
+                }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -56,9 +63,14 @@ public class JoinNode extends AppCompatActivity {
         secondNodeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                isDestinationNodeSelected = true;
-                destinationdNode = parent.getAdapter().getItem(position).toString();
-                Toast.makeText(getApplicationContext(), "selected : " + destinationdNode,Toast.LENGTH_LONG).show();
+                if(position>0){
+                    isDestinationNodeSelected = true;
+                    destinationdNode = parent.getAdapter().getItem(position).toString();
+                    Toast.makeText(getApplicationContext(), "selected : " + destinationdNode,Toast.LENGTH_LONG).show();
+                }else{
+                    isDestinationNodeSelected = false;
+                    Toast.makeText(getApplicationContext(), "select destination", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -72,8 +84,10 @@ public class JoinNode extends AppCompatActivity {
     public void onButtonClick(View view){
         if(isSourceNodeSelected&&isDestinationNodeSelected){
             if(!sourceNode.equals(destinationdNode)) {
-                //TODO add distance and magnetometer reading
+                //TODO add distance reading
                 //TODO create add edge to graph
+                ProceedFragment proceedFragment = new ProceedFragment("Point the phone towards the starting point");
+                proceedFragment.show(getSupportFragmentManager(), "Get Magnetometer reading");
                 Intent intent = new Intent();
                 setResult(RESULT_OK);
                 finish();
@@ -83,4 +97,13 @@ public class JoinNode extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        //TODO take magnetometer reading
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        dialog.dismiss();
+    }
 }

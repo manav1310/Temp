@@ -43,13 +43,16 @@ public class RSSICalculator extends Service {
             timestamp = System.currentTimeMillis();
             List<ScanResult> scanResults = wifiManager.getScanResults();
             String[] BSSIDString = new String[scanResults.size()];
+            String[] SSIDString = new String[scanResults.size()];
             int[] RSSIString = new int[scanResults.size()];
             for(int i=0;i<scanResults.size();i++) {
                 BSSIDString[i] = scanResults.get(i).BSSID;
                 RSSIString[i] = scanResults.get(i).level;
+                SSIDString[i] = scanResults.get(i).SSID;
             }
             Bundle extra = new Bundle();
             extra.putStringArray(Helper.BSSID, BSSIDString);
+            extra.putStringArray(Helper.SSID, SSIDString);
             extra.putIntArray(Helper.RSSI, RSSIString);
             extra.putLong(Helper.TimeStamp,timestamp);
             intent.putExtras(extra);
