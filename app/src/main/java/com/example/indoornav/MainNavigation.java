@@ -23,6 +23,7 @@ public class MainNavigation extends AppCompatActivity {
     private ArrayList<String> maps;
     private Boolean isMapSet = false;
     private Graph graph = null;
+    private String mapname;
     private String sourceNodeName;
     private String destinationNodeName;
     private Boolean isSourceNameSelected = false;
@@ -76,6 +77,7 @@ public class MainNavigation extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(position!=0) {
                     String mapName = maps.get(position);
+                    mapname = mapName;
                     String EdgesFileContent = getFileContents(mapName + Helper.Edges);
                     String NodesFileContent = getFileContents(mapName + Helper.Nodes);
                     graph = Graph.getInstance(mapName, NodesFileContent, EdgesFileContent);
@@ -163,6 +165,7 @@ public class MainNavigation extends AppCompatActivity {
             Intent intent = new Intent(this, Navigation.class);
             intent.putExtra(Helper.SourceNodeName, sourceNodeName);
             intent.putExtra(Helper.DestinationNodeName, destinationNodeName);
+            intent.putExtra(Helper.mapname, mapname);
             startActivity(intent);
         }else if(!isSourceNameSelected){
             Toast.makeText(getApplicationContext(), "Select Source Node",Toast.LENGTH_SHORT).show();

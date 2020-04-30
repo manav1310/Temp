@@ -89,6 +89,9 @@ public class JoinNode extends AppCompatActivity implements ProceedFragment.Notic
                 ProceedFragment proceedFragment = new ProceedFragment("Point the phone towards the starting point");
                 proceedFragment.show(getSupportFragmentManager(), "Get Magnetometer reading");
                 Intent intent = new Intent();
+                //Temporary statements for testing, Remove after implementing method for add edge
+                Graph.getInstance().addEdges(new Edge(sourceNode, destinationdNode, 5));
+                Graph.getInstance().addEdges(new Edge(destinationdNode, sourceNode, 5));
                 setResult(RESULT_OK);
                 finish();
             }else{

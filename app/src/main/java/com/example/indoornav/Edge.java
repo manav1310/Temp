@@ -16,6 +16,13 @@ public class Edge {
         this.direction = (float) jsonObject.getDouble("direction");
     }
 
+    public Edge(String st, String en, float distance){
+        this.st = st;
+        this.en = en;
+        this.distance = distance;
+        this.direction = 0;
+    }
+
     public String getSt() {
         return st;
     }

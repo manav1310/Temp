@@ -16,6 +16,7 @@ public class Helper {
     public static final String SourceNodeName               = "SourceNodeName";
     public static final String DestinationNodeName          = "DestinationNodeName";
     public static final String ChooseRSSI                   = "Choose RSSI data";
+    public static final String mapname                      = "Mapname";
 
     public static final int CREATE_NODE_REQUEST_CODE        = 0;
     public static final int JOIN_NODE_REQUEST_CODE          = 1;
