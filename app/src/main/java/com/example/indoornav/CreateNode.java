@@ -30,6 +30,7 @@ public class CreateNode extends AppCompatActivity implements ProceedFragment.Not
     private Boolean isRSSIDataSet = false;
     boolean flag = false;
     private SelectRSSIFragment dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,7 +150,7 @@ public class CreateNode extends AppCompatActivity implements ProceedFragment.Not
         }
         RSSIDataMap = newRSSIData;
         if (RSSIDataMap.isEmpty()) {
-            ProceedFragment proceedFragment = new ProceedFragment("RSSI data not available.\nProceed without RSSI data.");
+            ProceedFragment proceedFragment = new ProceedFragment("Proceed without RSSI data.");
             proceedFragment.show(getSupportFragmentManager(), "Proceed without RSSI");
         } else {
             saveNode();
