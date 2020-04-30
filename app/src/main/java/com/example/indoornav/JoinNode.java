@@ -21,7 +21,7 @@ public class JoinNode extends AppCompatActivity {
     private boolean isDestinationNodeSelected = false;
     private String sourceNode;
     private String destinationNode;
-    private float magnetomerReading;
+    private int magnetometerReading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +38,8 @@ public class JoinNode extends AppCompatActivity {
                 nodes.add(node.getNodeName());
             }
         }
-        Spinner firstNodeSpinner = (Spinner) findViewById(R.id.StartNodeSpinner);
-        Spinner secondNodeSpinner = (Spinner) findViewById(R.id.DestinationNodeSpinner);
+        Spinner firstNodeSpinner = findViewById(R.id.StartNodeSpinner);
+        final Spinner secondNodeSpinner = findViewById(R.id.DestinationNodeSpinner);
 
         ArrayAdapter<String> nodeListAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice, nodes);
         nodeListAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
@@ -51,10 +51,13 @@ public class JoinNode extends AppCompatActivity {
                 if (position > 0) {
                     isSourceNodeSelected = true;
                     sourceNode = parent.getAdapter().getItem(position).toString();
+                    findViewById(R.id.textView2).setVisibility(View.VISIBLE);
+                    secondNodeSpinner.setVisibility(View.VISIBLE);
                     Toast.makeText(getApplicationContext(), "Source Selected : " + sourceNode, Toast.LENGTH_LONG).show();
                 }else{
+                    findViewById(R.id.textView2).setVisibility(View.INVISIBLE);
+                    secondNodeSpinner.setVisibility(View.INVISIBLE);
                     isSourceNodeSelected = false;
-                    Toast.makeText(getApplicationContext(),"Select Source", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
@@ -71,7 +74,6 @@ public class JoinNode extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Destination Selected : " + destinationNode,Toast.LENGTH_LONG).show();
                 }else{
                     isDestinationNodeSelected = false;
-                    Toast.makeText(getApplicationContext(), "Select Destination", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -86,10 +88,9 @@ public class JoinNode extends AppCompatActivity {
     public void onButtonClick(View view){
         if(isSourceNodeSelected&&isDestinationNodeSelected){
             if(!sourceNode.equals(destinationNode)) {
+                //TODO get distance
                 Intent magnetometerReaderIntent = new Intent(this, MagnetometerReader.class);
                 startActivityForResult(magnetometerReaderIntent,Helper.GET_MAGNETOMETER_REQUEST_CODE);
-                //TODO get distance
-                //TODO create and add edge
             }else{
                 Toast.makeText(getApplicationContext(),"Same nodes selected as Source and Destination ",Toast.LENGTH_LONG).show();
             }
@@ -104,16 +105,17 @@ public class JoinNode extends AppCompatActivity {
     {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == Helper.GET_MAGNETOMETER_REQUEST_CODE) {
-            magnetomerReading = data.getFloatExtra(Helper.Magnetometer,-1);
-            saveEdge();
+            if(resultCode==RESULT_OK) {
+                magnetometerReading = data.getIntExtra(Helper.Magnetometer, -1);
+                if (magnetometerReading != (-1)) {
+                    saveEdge();
+                }
+            }
         }
     }
     private void saveEdge() {
-
-        Intent intent = new Intent();
-        //Temporary statements for testing, Remove after implementing method for add edge
-        Graph.getInstance().addEdges(new Edge(sourceNode, destinationNode, 5));
-        Graph.getInstance().addEdges(new Edge(destinationNode, sourceNode, 5));
+        Graph.getInstance().addEdges(new Edge(sourceNode, destinationNode, 5,magnetometerReading));
+        Graph.getInstance().addEdges(new Edge(destinationNode, sourceNode, 5,magnetometerReading));
         setResult(RESULT_OK);
         finish();
     }

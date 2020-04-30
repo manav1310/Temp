@@ -20,11 +20,17 @@
         <ImageView
             android:id="@+id/CompassImage"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow"/>
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.3"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/point_towards_the_source_node"
+            android:textColor="@color/colorPrimaryDark"/>
         <TextView
             android:id="@+id/DegreeTextView"
             android:layout_width="wrap_content"

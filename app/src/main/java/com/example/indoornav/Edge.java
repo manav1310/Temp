@@ -7,20 +7,20 @@ public class Edge {
     private String st;
     private String en;
     private float distance;
-    private float direction;
+    private int direction;
 
     public Edge(JSONObject jsonObject) throws JSONException {
         this.st = jsonObject.getString("st");
         this.en = jsonObject.getString("en");
         this.distance = (float) jsonObject.getDouble("distance");
-        this.direction = (float) jsonObject.getDouble("direction");
+        this.direction = jsonObject.getInt("direction");
     }
 
-    public Edge(String st, String en, float distance){
+    public Edge(String st, String en, float distance,int direction){
         this.st = st;
         this.en = en;
         this.distance = distance;
-        this.direction = 0;
+        this.direction = direction;
     }
 
     public String getSt() {
@@ -47,11 +47,11 @@ public class Edge {
         this.distance = distance;
     }
 
-    public float getDirection() {
+    public int getDirection() {
         return direction;
     }
 
-    public void setDirection(float direction) {
+    public void setDirection(int direction) {
         this.direction = direction;
     }
 }
