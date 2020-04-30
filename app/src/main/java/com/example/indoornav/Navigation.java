@@ -3,6 +3,9 @@ package com.example.indoornav;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -72,18 +75,39 @@ public class Navigation extends AppCompatActivity {
         }
 
         Collections.reverse(result);
-        for (Pair i : result){
-            System.out.println(i.first + " -> " + i.second);
-        }
+//        for (Pair i : result){
+//            System.out.println(i.first + " -> " + i.second);
+//        }
 
         return result;
     }
+
+    protected void routebwintermediate(Pair<String, String> p){
+        TextView src = findViewById(R.id.textView3);
+        TextView des = findViewById(R.id.textView4);
+        Button btn = findViewById(R.id.button);
+        src.setText(p.first);
+        des.setText(p.second);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Clicked");
+                return;
+            }
+        });
+    }
+
+
 
     protected void completerouting(String src, String des, String map){
         String EdgesFileContent = getFileContents(map + Helper.Edges);
         String NodesFileContent = getFileContents(map + Helper.Nodes);
         Graph graph = Graph.getInstance(map, NodesFileContent, EdgesFileContent);
         ArrayList<Pair<String, String> > shortestpath = getshortestpath(src, des, map, graph);
+        for(Pair p : shortestpath){
+            //System.out.println(p.first + " " + p.second);
+            routebwintermediate(p);
+        }
     }
 
     private String getFileContents(String fileName){

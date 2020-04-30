@@ -14,7 +14,7 @@ public class Node {
     private String nodeDescription;
     private Map<String, Integer> wifi = new HashMap<String, Integer>();
     private Boolean isBreadcrumb;
-    
+
 
     public Node(JSONObject jsonObject) throws JSONException {
         this.nodeName = jsonObject.getString("nodeName");
