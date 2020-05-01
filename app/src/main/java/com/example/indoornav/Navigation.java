@@ -23,9 +23,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 
+import javax.microedition.khronos.egl.EGL;
+
 public class Navigation extends AppCompatActivity {
 
-    private ArrayList<Pair<String, String> > getshortestpath(String src, String des, String map, Graph graph){
+    private ArrayList<Pair<String, String> > getshortestpath(String src, String des, Graph graph){
 
         Map<String, Boolean> visited = new HashMap<String, Boolean>();
         Map<String, Float> mindist   = new HashMap<String, Float>();
@@ -82,31 +84,50 @@ public class Navigation extends AppCompatActivity {
         return result;
     }
 
-    protected void routebwintermediate(Pair<String, String> p){
-        TextView src = findViewById(R.id.textView3);
-        TextView des = findViewById(R.id.textView4);
+    protected void routebwintermediate(Pair<String, String> p, Edge edge){
+        String src = p.first;
+        String des = p.second;
+        float  dis = edge.getDistance();
+        float  dir = edge.getDirection();
+        float distcovered = 0;
+
+
+        TextView src1 = findViewById(R.id.textView3);
+        TextView des1 = findViewById(R.id.textView4);
         Button btn = findViewById(R.id.button);
-        src.setText(p.first);
-        des.setText(p.second);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.println("Clicked");
-                return;
-            }
-        });
+        String s = src1.getText().toString();
+        String d = des1.getText().toString();
+        src1.setText(s + p.first);
+        des1.setText(d + p.second);
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                System.out.println("Clicked");
+//                return;
+//            }
+//        });
     }
 
 
 
     protected void completerouting(String src, String des, String map){
+
         String EdgesFileContent = getFileContents(map + Helper.Edges);
         String NodesFileContent = getFileContents(map + Helper.Nodes);
         Graph graph = Graph.getInstance(map, NodesFileContent, EdgesFileContent);
-        ArrayList<Pair<String, String> > shortestpath = getshortestpath(src, des, map, graph);
+
+        ArrayList<Pair<String, String> > shortestpath = getshortestpath(src, des, graph);
+        ArrayList<Edge> edges = graph.getEdges();
+
         for(Pair p : shortestpath){
-            //System.out.println(p.first + " " + p.second);
-            routebwintermediate(p);
+            Edge edge = new Edge();
+            for(Edge i : edges){
+                if((i.getSt() == p.first) && (i.getEn() == p.second)){
+                    edge.copycontents(i);
+                    break;
+                }
+            }
+            routebwintermediate(p, edge);
         }
     }
 
