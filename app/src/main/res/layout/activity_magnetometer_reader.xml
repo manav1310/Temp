@@ -17,11 +17,14 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"/>
+
         <ImageView
             android:id="@+id/CompassImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/arrow"/>
+            android:layout_width="300dp"
+            android:layout_height="212dp"
+            android:src="@drawable/compass_icon1"
+            />
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
