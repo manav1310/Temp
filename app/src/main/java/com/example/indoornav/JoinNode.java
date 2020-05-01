@@ -82,6 +82,7 @@ public class JoinNode extends AppCompatActivity {
         secondNodeSpinner = findViewById(R.id.DestinationNodeSpinner);
         srcdesttext = (TextView) findViewById(R.id.textview5);
 
+
         ArrayAdapter<String> nodeListAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice, nodes);
         nodeListAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         firstNodeSpinner.setAdapter(nodeListAdapter);
@@ -103,6 +104,8 @@ public class JoinNode extends AppCompatActivity {
                         secondNodeSpinner.setVisibility(View.INVISIBLE);
                     }
                     isSourceNodeSelected = false;
+                    if(possrc==1)
+                        isSourceNodeSelected=true;
                 }
             }
             @Override
@@ -121,6 +124,9 @@ public class JoinNode extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Destination Selected : " + destinationNode,Toast.LENGTH_LONG).show();
                 }else{
                     isDestinationNodeSelected = false;
+                    if(posdest==1)
+                        isDestinationNodeSelected=true;
+
                 }
             }
 

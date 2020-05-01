@@ -66,7 +66,7 @@
 
         <TextView
             android:id="@+id/textview5"
-            android:layout_width="193dp"
+            android:layout_width="326dp"
             android:layout_height="58dp"
             android:text="Source Node:   \nDestination Node:"
             android:textColor="#F44336"
@@ -78,7 +78,7 @@
 
         <Button
             android:id="@+id/buttonDirection"
-            android:layout_width="109dp"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:background="#8800BCD4"
             android:onClick="onButtonClick1"
@@ -92,7 +92,7 @@
 
         <Button
             android:id="@+id/buttonDist"
-            android:layout_width="108dp"
+            android:layout_width="127dp"
             android:layout_height="wrap_content"
             android:background="#8800BCD4"
             android:onClick="onButtonClick2"

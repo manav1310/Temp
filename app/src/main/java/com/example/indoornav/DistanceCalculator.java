@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 //public class DistanceCalculator {
@@ -71,8 +72,14 @@ public class DistanceCalculator extends Activity implements SensorEventListener{
 
         implementListeners();
 
+
+    }
+    public void getHeight(View view)
+    {
+        height = (EditText) findViewById(R.id.height);
         String content = height.getText().toString();
         ht = Integer.parseInt(content);
+        Toast.makeText(getApplicationContext(),"Height is: "+ht+" cm",Toast.LENGTH_SHORT).show();
     }
 
     protected float[] lowPassFilter( float[] input, float[] output ) {
