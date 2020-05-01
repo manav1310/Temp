@@ -6,6 +6,7 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,6 +27,33 @@ import java.util.Queue;
 import javax.microedition.khronos.egl.EGL;
 
 public class Navigation extends AppCompatActivity {
+    public Bundle out = new Bundle();
+    private int distreading;
+    private int flag = 0;
+    private String sourceNode;
+    private String destinationNode;
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Saves the data  on saved Instance as a key value pair Example As below key value pair
+        outState.putString("sourcenode", sourceNode);
+        outState.putString("destnode", destinationNode);
+        outState.putInt("dist", distreading);
+
+        // super.onSaveInstanceState(savedInstanceState);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedState) {
+        super.onRestoreInstanceState(savedState);
+        sourceNode = savedState.getString("sourcenode");
+        destinationNode = savedState.getString("destnode");
+        distreading = savedState.getInt("dist");
+
+    }
 
     private ArrayList<Pair<String, String> > getshortestpath(String src, String des, Graph graph){
 
@@ -157,6 +185,32 @@ public class Navigation extends AppCompatActivity {
             }
         }
         return stringBuilder.toString();
+    }
+    //for Distance(step count + distance)
+    public void  onButtonClick2(View view)
+    {
+        onSaveInstanceState(out);
+        Intent distReaderIntent = new Intent(this, DistanceCalculator.class);
+        startActivityForResult(distReaderIntent,Helper.GET_DIST_REQUEST_CODE);
+    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == Helper.GET_DIST_REQUEST_CODE) {
+            if(resultCode==RESULT_OK) {
+                distreading = data.getIntExtra(Helper.Dist, -1);
+                onRestoreInstanceState(out);
+               // Toast.makeText(getApplicationContext(), "Source Selected : " + sourceNode+" and Destination Selected : "+destinationNode , Toast.LENGTH_LONG).show();
+                if (distreading != (-1)) {///answer is stored in distreading
+                    flag=1;
+                }
+            }
+        }
+
+
     }
 
     @Override
