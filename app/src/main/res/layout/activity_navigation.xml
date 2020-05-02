@@ -7,33 +7,22 @@
     tools:context=".Navigation">
 
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="154dp"
-        android:layout_height="33dp"
-        android:layout_marginStart="128dp"
-        android:layout_marginTop="145dp"
-        android:layout_marginEnd="129dp"
-        android:text="Distance"
+        android:id="@+id/steps"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="175dp"
+        android:layout_marginTop="153dp"
+        android:layout_marginEnd="178dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView4"
-        android:layout_width="154dp"
-        android:layout_height="33dp"
-        android:layout_marginStart="128dp"
-        android:layout_marginTop="140dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
+        android:id="@+id/distance"
+        android:layout_width="58dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="164dp"
-        android:layout_marginTop="99dp"
-        android:text="Sync"
+        android:layout_marginStart="177dp"
+        android:layout_marginTop="69dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/steps" />
 </androidx.constraintlayout.widget.ConstraintLayout>

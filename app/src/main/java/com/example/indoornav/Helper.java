@@ -19,6 +19,7 @@ public class Helper {
     public static final String mapname                      = "Mapname";
     public static final String Magnetometer                 = "Magnetometer";
     public static final String Dist                         = "Distance";
+    public static final String Height                       = "Height";
 
     public static final int CREATE_NODE_REQUEST_CODE        = 0;
     public static final int JOIN_NODE_REQUEST_CODE          = 1;
