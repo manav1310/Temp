@@ -18,10 +18,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MagnetometerReader"></activity>
-        <activity android:name=".DistanceCalculator"></activity>
+        <activity android:name=".MagnetometerReader"> </activity>
+        <activity android:name=".DistanceCalculator"> </activity>
 
-        <service android:name=".RSSICalculator" />
+        <service android:name=".RSSICalculator" android:exported="false" />
+        <service android:name=".DistanceCalc" android:exported="false"/>
 
         <activity android:name=".Navigation" />
         <activity android:name=".Mapping" />

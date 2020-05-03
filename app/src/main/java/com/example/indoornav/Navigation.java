@@ -1,7 +1,9 @@
 package com.example.indoornav;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -24,7 +26,7 @@ import java.util.Objects;
 import java.util.Queue;
 import static java.lang.Integer.parseInt;
 
-public class Navigation extends AppCompatActivity implements SensorEventListener {
+public class Navigation extends AppCompatActivity {
     //public Bundle out = new Bundle();
     private String source;
     private String destination;
@@ -40,6 +42,7 @@ public class Navigation extends AppCompatActivity implements SensorEventListener
     private boolean ignore;
     private int countdown;
     private int distance;
+    private boolean stoploop = false;
 
     private String getFileContents(String fileName){
         FileInputStream fis = null;
@@ -67,47 +70,26 @@ public class Navigation extends AppCompatActivity implements SensorEventListener
         return stringBuilder.toString();
     }
 
-    protected float[] lowPassFilter( float[] input, float[] output ) {
-        if ( output == null ) return input;
-        for ( int i=0; i<input.length; i++ ) {
-            output[i] = output[i] + 1.0f * (input[i] - output[i]);
-        }
-        return output;
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-
-        System.out.println(stepCount);
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            float[] smoothed = lowPassFilter(event.values, gravity);
-            gravity[0] = smoothed[0];
-            gravity[1] = smoothed[1];
-            gravity[2] = smoothed[2];
-
-            if(ignore) {
-                countdown--;
-                ignore = (countdown >= 0);
-            }
-            else
-                countdown = 22;
-            if(toggle && (Math.abs(prevY - gravity[1]) > threshold) && !ignore){
-                    stepCount++;
-                distance = (int)(stepCount*0.415*height);
-                ignore = true;
-            }
-            prevY = gravity[1];
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-
     @Override
     protected void onStop(){
+        stopService(new Intent(this, RSSICalculator.class));
+        unregisterReceiver(DistanceBroadcastReceiver);
         super.onStop();
-        sensorManager.unregisterListener(this, sensorGravity);
     }
+
+    @Override
+    protected void onPause(){
+        stopService(new Intent(this, RSSICalculator.class));
+        unregisterReceiver(DistanceBroadcastReceiver);
+        finish();
+        super.onPause();
+    }
+
+//    @Override
+//    protected void onResume(){
+//        finish();
+//        super.onResume();
+//    }
 
     private ArrayList<Pair<String, String> > getshortestpath(Graph graph){
 
@@ -159,6 +141,13 @@ public class Navigation extends AppCompatActivity implements SensorEventListener
         return result;
     }
 
+    private BroadcastReceiver DistanceBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            stoploop = true;
+        }
+    };
+
     protected void routebwintermediate(Pair<String, String> p, Edge edge) {
 
         toggle = true;
@@ -173,10 +162,18 @@ public class Navigation extends AppCompatActivity implements SensorEventListener
         System.out.println(interdis);
         System.out.println(interdir);
 
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        assert sensorManager != null;
-        sensorGravity = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, sensorGravity, SensorManager.SENSOR_DELAY_NORMAL);
+        Intent intent = new Intent(this, DistanceCalc.class);
+        startService(intent);
+        registerReceiver(DistanceBroadcastReceiver, new IntentFilter("DistanceCalc"));
+
+//        while(!stoploop){
+//            System.out.println("Running");
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     protected void completerouting(){
