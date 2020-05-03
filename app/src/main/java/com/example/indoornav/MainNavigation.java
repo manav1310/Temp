@@ -164,7 +164,7 @@ public class MainNavigation extends AppCompatActivity {
 
     public void onSendButtonClick(View view){
         if(isSourceNameSelected && isDestinationNameSelected && sourceNodeName!=destinationNodeName) {
-            TextView heightip = findViewById(R.id.heightip);
+            //TextView heightip = findViewById(R.id.heightip);
             //height = heightip.getText().toString();
             height = "170";
 
