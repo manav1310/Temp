@@ -1,5 +1,7 @@
 package com.example.indoornav;
 
+import java.util.concurrent.TimeUnit;
+
 public class Distance implements Runnable {
 
     //@Override
@@ -11,13 +13,16 @@ public class Distance implements Runnable {
     public void run() {
         final Object lock = new Object();
         int i = 0;
-        while(i<100000){
+        while(i<10){
             synchronized (lock) {
-                Navigation.stepCount++;
+                System.out.println(Navigation.stepCount);
             }
-//            System.out.println("hello");
-//            System.out.println(Navigation.stepCount);
             i++;
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -54,6 +54,7 @@ public class Navigation extends AppCompatActivity implements SensorEventListener
     private int countdown;
     private int ht;
     public static volatile int distance;
+    protected Thread dis;
 
 //    @Override
 //    public void onSaveInstanceState(Bundle outState) {
@@ -146,7 +147,7 @@ public class Navigation extends AppCompatActivity implements SensorEventListener
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        System.out.println(stepCount);
+        //System.out.println(stepCount);
         final Object lock = new Object();
         // get accelerometer data
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -185,7 +186,7 @@ public class Navigation extends AppCompatActivity implements SensorEventListener
     protected void onStop(){
         super.onStop();
         sensorManager.unregisterListener(this, sensorGravity);
-
+        dis.interrupt();
     }
 
     protected void routebwintermediate(Pair<String, String> p, Edge edge){
@@ -198,9 +199,6 @@ public class Navigation extends AppCompatActivity implements SensorEventListener
         toggle = true;
         threshold = 0.64;
         stepCount = 0;
-
-        Thread dis = new Thread(new Distance());
-        dis.start();
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         assert sensorManager != null;
@@ -321,6 +319,12 @@ public class Navigation extends AppCompatActivity implements SensorEventListener
 //    }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        dis.start();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
@@ -329,6 +333,7 @@ public class Navigation extends AppCompatActivity implements SensorEventListener
         dest   = intent.getStringExtra(Helper.DestinationNodeName);
         map    = intent.getStringExtra(Helper.mapname);
         height = parseInt(intent.getStringExtra(Helper.Height));
+        dis = new Thread(new Distance());
         completerouting(source, dest, map);
         //Routing is completed
     }
