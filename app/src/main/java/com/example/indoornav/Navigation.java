@@ -10,6 +10,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Pair;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -27,13 +29,13 @@ import java.util.Queue;
 import static java.lang.Integer.parseInt;
 
 public class Navigation extends AppCompatActivity {
-    //public Bundle out = new Bundle();
-    private String source;
-    private String destination;
-    private String map;
+
+    private Graph graph;
     private Integer height;
     private SensorManager sensorManager;
     private Sensor sensorGravity;
+    private String source;
+    private String destination;
     private float[] gravity = new float[3];
     private int stepCount;
     private boolean toggle;
@@ -43,46 +45,53 @@ public class Navigation extends AppCompatActivity {
     private int countdown;
     private int distance;
     private boolean stoploop = false;
+    private ArrayList<Edge> shortestPath;
+    private int currentIndex;
+    private float distanceToNextNode;
+    TextView steps;
 
-    private String getFileContents(String fileName){
-        FileInputStream fis = null;
-        try {
-            fis = getApplication().openFileInput(fileName);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        assert fis != null;
-        InputStreamReader inputStreamReader = new InputStreamReader(fis, StandardCharsets.UTF_8);
-        StringBuilder stringBuilder = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
-            String line = reader.readLine();
-            while (line != null) {
-                stringBuilder.append(line).append('\n');
-                line = reader.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                inputStreamReader.close();
-            } catch (IOException ignored) {}
-        }
-        return stringBuilder.toString();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_navigation);
+        Intent intent = getIntent();
+        source = intent.getStringExtra(Helper.SourceNodeName);
+        destination = intent.getStringExtra(Helper.DestinationNodeName);
+        height = parseInt(Objects.requireNonNull(intent.getStringExtra(Helper.Height)));
+        steps = findViewById(R.id.steps);
+        completeRouting();
     }
 
     @Override
     protected void onStop(){
         stopService(new Intent(this, RSSICalculator.class));
-        unregisterReceiver(DistanceBroadcastReceiver);
+        //unregisterReceiver(DistanceBroadcastReceiver);
         super.onStop();
     }
 
     @Override
-    protected void onPause(){
+    protected void onDestroy(){
         stopService(new Intent(this, RSSICalculator.class));
         unregisterReceiver(DistanceBroadcastReceiver);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause(){
+//        stopService(new Intent(this, RSSICalculator.class));
+//        unregisterReceiver(DistanceBroadcastReceiver);
         finish();
         super.onPause();
+    }
+
+    protected void completeRouting(){
+        graph = Graph.getInstance();
+        shortestPath = getShortestPath();
+        currentIndex = 0;
+//        System.out.println("shortest path size : "+shortestPath.size());
+        startService(new Intent(this, DistanceCalc.class));
+        registerReceiver(DistanceBroadcastReceiver, new IntentFilter("DistanceCalc"));
+        startRouting(0);
     }
 
 //    @Override
@@ -91,52 +100,54 @@ public class Navigation extends AppCompatActivity {
 //        super.onResume();
 //    }
 
-    private ArrayList<Pair<String, String> > getshortestpath(Graph graph){
+    private ArrayList<Edge> getShortestPath(){
 
-        Map<String, Boolean> visited = new HashMap<String, Boolean>();
-        Map<String, Float> mindist   = new HashMap<String, Float>();
-        Map<String, String> parent   = new HashMap<String, String>();
-        ArrayList<Pair<String, String> > result = new ArrayList<Pair<String, String>>();
+        Map<String, Boolean> visited = new HashMap<>();
+        Map<String, Float> minimumDistance   = new HashMap<>();
+        Map<String, Edge> parent   = new HashMap<>();
+        ArrayList<Edge> result = new ArrayList<>();
 
         for (Node node : graph.getNodes()){
             visited.put(node.getNodeName(), false);
-            mindist.put(node.getNodeName(), (float) 1000000);
+            minimumDistance.put(node.getNodeName(),(float) Integer.MAX_VALUE);
             parent.put(node.getNodeName(), null);
         }
 
         visited.put(source, true);
-        mindist.put(source, (float) 0);
-        parent.put(source, source);
+        minimumDistance.put(source, (float) 0);
+        parent.put(source, null);
+
         Map<String,ArrayList<Edge> > adjacencyList = graph.getAdjacencyList();
 
-        Queue<String> queue = new LinkedList<String>();
+        Queue<String> queue = new LinkedList<>();
         queue.add(source);
-        while(!Objects.equals(queue.peek(), destination)){
+        while(!destination.equals(queue.peek())){
 
             visited.put(queue.peek(), true);
 
-            for(Edge i : adjacencyList.get(queue.peek())){
+            for(Edge edge : adjacencyList.get(queue.peek())){
 
-                if(!visited.get(i.getEn())){
-                    queue.add(i.getEn());
+                if(!visited.get(edge.getEn())){
+                    queue.add(edge.getEn());
                 }
 
-                float distance = mindist.get(i.getSt()) + i.getDistance();
+                float distance = minimumDistance.get(edge.getSt()) + edge.getDistance();
 
-                if(distance < mindist.get(i.getEn())) {
-                    mindist.put(i.getEn(), distance);
-                    parent.put(i.getEn(), i.getSt());
+                if(distance < minimumDistance.get(edge.getEn())) {
+                    minimumDistance.put(edge.getEn(), distance);
+                    parent.put(edge.getEn(), edge);
                 }
             }
             queue.remove();
         }
 
-        String curr = destination;
-        while(!curr.equals(source)){
-            String prev = parent.get(curr);
-            result.add(Pair.create(prev, curr));
+        Edge curr = parent.get(destination);
+        while(curr!=null){
+            Edge prev = parent.get(curr);
+            result.add(curr);
             curr = prev;
         }
+
         Collections.reverse(result);
         return result;
     }
@@ -144,28 +155,28 @@ public class Navigation extends AppCompatActivity {
     private BroadcastReceiver DistanceBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            stoploop = true;
+            //System.out.println(distanceToNextNode);
+            distanceToNextNode-=height*0.45;
+            if(distanceToNextNode<=0){              //change it to 10 percent threshold
+                startRouting(currentIndex++);
+            }
         }
     };
 
-    protected void routebwintermediate(Pair<String, String> p, Edge edge) {
+    protected void startRouting(int currentIndex) {
 
-        toggle = true;
-        threshold = 0.64;
-        stepCount = 0;
-        String intersrc = p.first;
-        String interdes = p.second;
-        float  interdis = edge.getDistance();
-        float  interdir = edge.getDirection();
-        System.out.println(intersrc);
-        System.out.println(interdes);
-        System.out.println(interdis);
-        System.out.println(interdir);
-
-        Intent intent = new Intent(this, DistanceCalc.class);
-        startService(intent);
-        registerReceiver(DistanceBroadcastReceiver, new IntentFilter("DistanceCalc"));
-
+        if(currentIndex==shortestPath.size()){
+            //TODO reached
+            System.out.println("Routing Complete");
+//            String val = "Routing completed";
+            steps.setText("Routing completed");
+//            stopService(new Intent(this, RSSICalculator.class));
+//            unregisterReceiver(DistanceBroadcastReceiver);
+        }else {
+            distanceToNextNode = 500;
+//            distanceToNextNode = shortestPath.get(currentIndex).getDistance();
+//            System.out.println(distanceToNextNode);
+        }
 //        while(!stoploop){
 //            System.out.println("Running");
 //            try {
@@ -174,43 +185,5 @@ public class Navigation extends AppCompatActivity {
 //                e.printStackTrace();
 //            }
 //        }
-    }
-
-    protected void completerouting(){
-
-        String EdgesFileContent = getFileContents(map + Helper.Edges);
-        String NodesFileContent = getFileContents(map + Helper.Nodes);
-        Graph graph = Graph.getInstance(map, NodesFileContent, EdgesFileContent);
-
-        ArrayList<Pair<String, String> > shortestpath = getshortestpath(graph);
-        ArrayList<Edge> edges = graph.getEdges();
-
-        for(Pair<String, String> p : shortestpath){
-            Edge edge = new Edge();
-            for(Edge i : edges){
-                if((i.getSt().equals(p.first)) && (i.getEn().equals(p.second))){
-                    edge.copycontents(i);
-                    break;
-                }
-            }
-            routebwintermediate(p, edge);
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_navigation);
-        Intent intent = getIntent();
-        source = intent.getStringExtra(Helper.SourceNodeName);
-        destination   = intent.getStringExtra(Helper.DestinationNodeName);
-        map    = intent.getStringExtra(Helper.mapname);
-        height = parseInt(Objects.requireNonNull(intent.getStringExtra(Helper.Height)));
-        completerouting();
     }
 }
