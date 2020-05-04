@@ -23,6 +23,7 @@
 
         <service android:name=".RSSICalculator" android:exported="false" />
         <service android:name=".DistanceCalc" android:exported="false"/>
+        <service android:name=".MagRead" android:exported="false" />
 
         <activity android:name=".Navigation" />
         <activity android:name=".Mapping" />
