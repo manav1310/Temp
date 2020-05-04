@@ -113,26 +113,24 @@ public class Navigation extends AppCompatActivity {
             parent.put(node.getNodeName(), null);
         }
 
-        visited.put(source, true);
         minimumDistance.put(source, (float) 0);
-        parent.put(source, null);
 
         Map<String,ArrayList<Edge> > adjacencyList = graph.getAdjacencyList();
 
         Queue<String> queue = new LinkedList<>();
         queue.add(source);
-        while(!destination.equals(queue.peek())){
 
+        while(!visited.get(destination)){
+            if(visited.get(queue.peek())){
+                queue.remove();
+                continue;
+            }
             visited.put(queue.peek(), true);
-
             for(Edge edge : adjacencyList.get(queue.peek())){
-
                 if(!visited.get(edge.getEn())){
                     queue.add(edge.getEn());
                 }
-
                 float distance = minimumDistance.get(edge.getSt()) + edge.getDistance();
-
                 if(distance < minimumDistance.get(edge.getEn())) {
                     minimumDistance.put(edge.getEn(), distance);
                     parent.put(edge.getEn(), edge);
@@ -140,17 +138,67 @@ public class Navigation extends AppCompatActivity {
             }
             queue.remove();
         }
-
         Edge curr = parent.get(destination);
         while(curr!=null){
-            Edge prev = parent.get(curr);
+            Edge prev = parent.get(curr.getSt());
             result.add(curr);
             curr = prev;
         }
-
         Collections.reverse(result);
         return result;
     }
+
+//    private ArrayList<Edge> getShortestPath(){
+//
+//        Map<String, Boolean> visited = new HashMap<>();
+//        Map<String, Float> minimumDistance   = new HashMap<>();
+//        Map<String, Edge> parent   = new HashMap<>();
+//        ArrayList<Edge> result = new ArrayList<>();
+//
+//        for (Node node : graph.getNodes()){
+//            visited.put(node.getNodeName(), false);
+//            minimumDistance.put(node.getNodeName(),(float) Integer.MAX_VALUE);
+//            parent.put(node.getNodeName(), null);
+//        }
+//
+//        visited.put(source, true);
+//        minimumDistance.put(source, (float) 0);
+//        parent.put(source, null);
+//
+//        Map<String,ArrayList<Edge> > adjacencyList = graph.getAdjacencyList();
+//
+//        Queue<String> queue = new LinkedList<>();
+//        queue.add(source);
+//        while(!destination.equals(queue.peek())){
+//
+//            visited.put(queue.peek(), true);
+//
+//            for(Edge edge : adjacencyList.get(queue.peek())){
+//
+//                if(!visited.get(edge.getEn())){
+//                    queue.add(edge.getEn());
+//                }
+//
+//                float distance = minimumDistance.get(edge.getSt()) + edge.getDistance();
+//
+//                if(distance < minimumDistance.get(edge.getEn())) {
+//                    minimumDistance.put(edge.getEn(), distance);
+//                    parent.put(edge.getEn(), edge);
+//                }
+//            }
+//            queue.remove();
+//        }
+//
+//        Edge curr = parent.get(destination);
+//        while(curr!=null){
+//            Edge prev = parent.get(curr);
+//            result.add(curr);
+//            curr = prev;
+//        }
+//
+//        Collections.reverse(result);
+//        return result;
+//    }
 
     private BroadcastReceiver DistanceBroadcastReceiver = new BroadcastReceiver() {
         @Override
