@@ -28,7 +28,7 @@ public class MagnetometerReader extends AppCompatActivity implements SensorEvent
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_magnetometer_reader);
-        compassimage = (ImageView) findViewById(R.id.CompassImage);
+        compassimage = findViewById(R.id.CompassImage);
         DegreeTV = findViewById(R.id.DegreeTextView);
         SensorManage = (SensorManager) getSystemService(SENSOR_SERVICE);
     }
@@ -42,7 +42,7 @@ public class MagnetometerReader extends AppCompatActivity implements SensorEvent
     @Override
     protected void onResume() {
         super.onResume();
-        SensorManage.registerListener(this, SensorManage.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+        SensorManage.registerListener(this, SensorManage.getDefaultSensor(3),
                 SensorManager.SENSOR_DELAY_GAME);
     }
 
