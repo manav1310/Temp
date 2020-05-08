@@ -31,7 +31,6 @@ public class DistanceCalc extends IntentService implements SensorEventListener {
             gravity[2] = smoothed[2];
             double threshold = 0.64;
             if(Math.abs(prevY - gravity[1]) > threshold){
-//                System.out.println("Sending broadcast");
                 Intent intent1 = new Intent("DistanceCalc");
                 sendBroadcast(intent1);
             }

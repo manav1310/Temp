@@ -77,7 +77,6 @@ public class Navigation extends AppCompatActivity {
         graph = Graph.getInstance();
         shortestPath = getShortestPath();
         currentIndex = 0;
-        System.out.println("shortest path size : "+shortestPath.size());
         startService(new Intent(this, DistanceCalc.class));
         registerReceiver(DistanceBroadcastReceiver, new IntentFilter("DistanceCalc"));
         startService(new Intent(this, MagRead.class));
@@ -136,7 +135,6 @@ public class Navigation extends AppCompatActivity {
     private BroadcastReceiver DistanceBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-//            System.out.println("Dis working");
             distanceToNextNode-=height*0.45;
             if(distanceToNextNode<=0){              //change it to 10 percent threshold
                 startRouting(currentIndex++);
@@ -161,7 +159,6 @@ public class Navigation extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     protected void startRouting(int currentIndex) {
         if(currentIndex==shortestPath.size()){
-            //TODO reached
             stopService(new Intent(this, MagRead.class));
             unregisterReceiver(MagnetometerReceiver);
             stopService(new Intent(this, DistanceCalc.class));
@@ -169,8 +166,7 @@ public class Navigation extends AppCompatActivity {
             compassimage.setVisibility(View.INVISIBLE);
             DegreeTV.setText("Routing completed");
         }else {
-            distanceToNextNode = 500;
-//            distanceToNextNode = shortestPath.get(currentIndex).getDistance();
+            distanceToNextNode = shortestPath.get(currentIndex).getDistance();
         }
     }
 }
