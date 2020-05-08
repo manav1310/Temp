@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,7 +38,7 @@ public class CreateNode extends AppCompatActivity implements ProceedFragment.Not
         isBreadCrumbChoices.add("No");
         isBreadCrumbChoices.add("Yes");
         Spinner spinner = findViewById(R.id.isBreadCrumbSpinner);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice, isBreadCrumbChoices);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_singlechoice, isBreadCrumbChoices);
         dataAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         spinner.setAdapter(dataAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -117,13 +116,17 @@ public class CreateNode extends AppCompatActivity implements ProceedFragment.Not
 
     private void getRSSIData(Intent intent){
         Bundle extras = intent.getExtras();
+        assert extras != null;
         if((System.currentTimeMillis() - extras.getLong(Helper.TimeStamp))/1000 < 10) {
             RSSISSIDs = new HashMap<>();
             RSSIDataMap = new HashMap<>();
             int[] RSSI = extras.getIntArray(Helper.RSSI);
             String[] BSSID = extras.getStringArray(Helper.BSSID);
             String[] SSID = extras.getStringArray(Helper.SSID);
+            assert RSSI != null;
             for (int i = 0; i < RSSI.length; i++) {
+                assert BSSID != null;
+                assert SSID != null;
                 RSSISSIDs.put(BSSID[i], SSID[i]);
                 RSSIDataMap.put(BSSID[i], RSSI[i]);
             }

@@ -24,7 +24,7 @@ public class Helper {
     public static final int CREATE_NODE_REQUEST_CODE        = 0;
     public static final int JOIN_NODE_REQUEST_CODE          = 1;
     public static final int GET_MAGNETOMETER_REQUEST_CODE   = 2;
-    public static final int GET_DIST_REQUEST_CODE =3 ;
+    public static final int GET_DIST_REQUEST_CODE           = 3;
 
 
 }

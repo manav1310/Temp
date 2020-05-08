@@ -54,7 +54,7 @@ public class MainMapping extends AppCompatActivity implements AdapterView.OnItem
         try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
             String line = reader.readLine();
             while (line != null) {
-                maps.add(new String(line));
+                maps.add(line);
                 line = reader.readLine();
             }
         } catch (IOException e) {
@@ -63,11 +63,11 @@ public class MainMapping extends AppCompatActivity implements AdapterView.OnItem
             try {
                 inputStreamReader.close();
             } catch (IOException ignored) {
-                ;
+
             }
         }
         Spinner spinner = findViewById(R.id.LoadMapSpinner);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice, maps);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_singlechoice, maps);
         dataAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         spinner.setAdapter(dataAdapter);
         spinner.setOnItemSelectedListener(this);

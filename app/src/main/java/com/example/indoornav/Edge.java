@@ -23,17 +23,6 @@ public class Edge {
         this.direction = direction;
     }
 
-    public Edge(){
-
-    }
-
-    public void copycontents(Edge i){
-        this.st = i.getSt();
-        this.en = i.getEn();
-        this.distance = i.getDistance();
-        this.direction = i.getDirection();
-    }
-
     public String getSt() {
         return st;
     }

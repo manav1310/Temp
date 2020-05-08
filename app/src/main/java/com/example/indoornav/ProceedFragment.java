@@ -14,11 +14,11 @@ public class ProceedFragment extends DialogFragment {
     private String message;
 
     public interface NoticeDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
-        public void onDialogNegativeClick(DialogFragment dialog);
+        void onDialogPositiveClick(DialogFragment dialog);
+        void onDialogNegativeClick(DialogFragment dialog);
     }
 
-    NoticeDialogListener listener;
+    private NoticeDialogListener listener;
 
     ProceedFragment(String message){
         this.message = message;

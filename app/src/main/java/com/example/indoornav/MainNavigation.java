@@ -8,9 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -71,7 +69,7 @@ public class MainNavigation extends AppCompatActivity {
         destinationNodeSpinner = findViewById(R.id.NavDestNodeSpinner);
 
         Spinner spinner = findViewById(R.id.NavigationLoadMapSpinner);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice, maps);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_singlechoice, maps);
         dataAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         spinner.setAdapter(dataAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -112,7 +110,7 @@ public class MainNavigation extends AppCompatActivity {
                 nodesNames.add(node.getNodeName());
             }
         }
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice,nodesNames);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_singlechoice,nodesNames);
         dataAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         sourceNodeSpinner.setAdapter(dataAdapter);
         sourceNodeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -163,7 +161,7 @@ public class MainNavigation extends AppCompatActivity {
     }
 
     public void onSendButtonClick(View view){
-        if(isSourceNameSelected && isDestinationNameSelected && sourceNodeName!=destinationNodeName) {
+        if(isSourceNameSelected && isDestinationNameSelected && !sourceNodeName.equals(destinationNodeName)) {
             //TextView heightip = findViewById(R.id.heightip);
             //height = heightip.getText().toString();
             height = "170";

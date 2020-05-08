@@ -76,7 +76,6 @@ public class CreateMap extends AppCompatActivity {
 
     private ArrayList<String> mapsList() {
         ArrayList<String> maps = new ArrayList<>();
-        File mapFile = new File(getApplicationContext().getFilesDir(),Helper.MapNamesFileList);
         FileInputStream fis = null;
         try {
             fis = getApplication().openFileInput(Helper.MapNamesFileList);
@@ -99,7 +98,6 @@ public class CreateMap extends AppCompatActivity {
             try {
                 inputStreamReader.close();
             } catch (IOException ignored) {
-                ;
             }
         }
         return maps;

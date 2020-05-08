@@ -18,8 +18,8 @@ public class SelectRSSIFragment extends DialogFragment{
     private Map<String, String> RSSISSIDs;
     private String message;
     public interface NoticeDialogListener {
-        public void onRSSIDialogPositiveClick(DialogFragment dialog);
-        public void onRSSIDialogNegativeClick(DialogFragment dialog);
+        void onRSSIDialogPositiveClick(DialogFragment dialog);
+        void onRSSIDialogNegativeClick(DialogFragment dialog);
     }
 
     SelectRSSIFragment.NoticeDialogListener listener;

@@ -1,14 +1,11 @@
 package com.example.indoornav;
 
 import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,7 +67,8 @@ public class Graph {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        for (int i=0; i < nodesJsonArray.length(); i++) {
+        assert nodesJsonArray != null;
+        for (int i = 0; i < nodesJsonArray.length(); i++) {
             try {
                 nodes.add(new Node(new JSONObject((String) nodesJsonArray.get(i))));
             } catch (JSONException e) {
@@ -83,7 +81,8 @@ public class Graph {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        for (int i=0; i < edgesJsonArray.length(); i++) {
+        assert edgesJsonArray != null;
+        for (int i = 0; i < edgesJsonArray.length(); i++) {
             try {
                 edges.add(new Edge(new JSONObject((String) edgesJsonArray.get(i))));
             } catch (JSONException e) {
