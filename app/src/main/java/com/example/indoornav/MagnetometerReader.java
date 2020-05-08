@@ -20,10 +20,9 @@ public class MagnetometerReader extends AppCompatActivity implements SensorEvent
     private SensorManager SensorManage;
     private int degree;
     private ImageView compassimage;
-    // record the angle turned of the compass picture
     private float DegreeStart = 0f;
-
     TextView DegreeTV;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,17 +50,13 @@ public class MagnetometerReader extends AppCompatActivity implements SensorEvent
     public void onSensorChanged(SensorEvent event) {
         degree = Math.round(event.values[0]);
         DegreeTV.setText("Magnetometer Reading: " + degree + " degrees N");
-        // rotation animation - reverse turn degree degrees
         RotateAnimation ra = new RotateAnimation(
                 DegreeStart,
                 -degree,
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
-        // set the compass animation after the end of the reservation status
         ra.setFillAfter(true);
-        // set how long the animation for the compass image will take place
         ra.setDuration(210);
-        // Start animation of compass image
         compassimage.startAnimation(ra);
         DegreeStart = -degree;
     }

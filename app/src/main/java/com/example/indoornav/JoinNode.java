@@ -68,7 +68,7 @@ public class JoinNode extends AppCompatActivity {
         secondNodeSpinner = findViewById(R.id.DestinationNodeSpinner);
         srcdesttext = findViewById(R.id.textview5);
 
-        ArrayAdapter<String> nodeListAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice, nodes);
+        ArrayAdapter<String> nodeListAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_singlechoice, nodes);
         nodeListAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         firstNodeSpinner.setAdapter(nodeListAdapter);
         secondNodeSpinner.setAdapter(nodeListAdapter);
@@ -89,9 +89,7 @@ public class JoinNode extends AppCompatActivity {
                         findViewById(R.id.textView2).setVisibility(View.INVISIBLE);
                         secondNodeSpinner.setVisibility(View.INVISIBLE);
                     }
-                    isSourceNodeSelected = false;
-                    if(possrc==1)
-                        isSourceNodeSelected=true;
+                    isSourceNodeSelected = (possrc == 1);
                 }
             }
             @Override
@@ -110,9 +108,7 @@ public class JoinNode extends AppCompatActivity {
                     srcdesttext.setText("Source node: "+sourceNode+"\nDestination Node: "+destinationNode);
                     Toast.makeText(getApplicationContext(), "Destination Selected : " + destinationNode,Toast.LENGTH_LONG).show();
                 }else{
-                    isDestinationNodeSelected = false;
-                    if(posdest==1)
-                        isDestinationNodeSelected=true;
+                    isDestinationNodeSelected = (posdest == 1);
                 }
             }
 
@@ -169,8 +165,15 @@ public class JoinNode extends AppCompatActivity {
     }
 
     private void saveEdge() {
+        int magreadopposite;
+        if(magnetometerReading >= 180){
+            magreadopposite = magnetometerReading - 180;
+        }
+        else{
+            magreadopposite = 180 + magnetometerReading;
+        }
         Graph.getInstance().addEdges(new Edge(sourceNode, destinationNode, distreading,magnetometerReading));
-        Graph.getInstance().addEdges(new Edge(destinationNode, sourceNode, distreading,magnetometerReading));
+        Graph.getInstance().addEdges(new Edge(destinationNode, sourceNode, distreading,magreadopposite));
         setResult(RESULT_OK);
         finish();
     }
