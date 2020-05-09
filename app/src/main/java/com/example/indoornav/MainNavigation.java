@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import java.io.BufferedReader;
@@ -23,7 +24,7 @@ public class MainNavigation extends AppCompatActivity {
     private Boolean isMapSet = false;
     private Graph graph = null;
     private String mapname;
-    private String height;
+    private Integer height = 0;
     private String sourceNodeName;
     private String destinationNodeName;
     private Boolean isSourceNameSelected = false;
@@ -162,11 +163,14 @@ public class MainNavigation extends AppCompatActivity {
 
     public void onSendButtonClick(View view){
         if(isSourceNameSelected && isDestinationNameSelected && !sourceNodeName.equals(destinationNodeName)) {
-            //TextView heightip = findViewById(R.id.heightip);
-            //height = heightip.getText().toString();
-            height = "170";
-
+            EditText heightip = findViewById(R.id.heightip);
+            height = Integer.valueOf(heightip.getText().toString());
+            if(height <= 0){
+                Toast.makeText(getApplicationContext(),"Enter Height First",Toast.LENGTH_SHORT).show();
+                return;
+            }
             Intent intent = new Intent(this, Navigation.class);
+            intent.putExtra(Helper.Height, height);
             intent.putExtra(Helper.SourceNodeName, sourceNodeName);
             intent.putExtra(Helper.DestinationNodeName, destinationNodeName);
             intent.putExtra(Helper.mapname, mapname);

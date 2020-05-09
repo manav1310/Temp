@@ -25,7 +25,6 @@ public class JoinNode extends AppCompatActivity {
     private int possrc=0,posdest=0;
     public Bundle out = new Bundle();
     private Spinner secondNodeSpinner;
-    private TextView srcdesttext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +65,6 @@ public class JoinNode extends AppCompatActivity {
         }
         Spinner firstNodeSpinner = findViewById(R.id.StartNodeSpinner);
         secondNodeSpinner = findViewById(R.id.DestinationNodeSpinner);
-        srcdesttext = findViewById(R.id.textview5);
 
         ArrayAdapter<String> nodeListAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_singlechoice, nodes);
         nodeListAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
@@ -80,7 +78,6 @@ public class JoinNode extends AppCompatActivity {
                     isSourceNodeSelected = true;
                     sourceNode = parent.getAdapter().getItem(position).toString();
                     possrc =1;
-                    srcdesttext.setText("Source node: "+sourceNode+"\nDestination Node:");
                     findViewById(R.id.textView2).setVisibility(View.VISIBLE);
                     secondNodeSpinner.setVisibility(View.VISIBLE);
                     Toast.makeText(getApplicationContext(), "Source Selected : " + sourceNode, Toast.LENGTH_LONG).show();
@@ -105,7 +102,6 @@ public class JoinNode extends AppCompatActivity {
                     isDestinationNodeSelected = true;
                     destinationNode = parent.getAdapter().getItem(position).toString();
                     posdest=1;
-                    srcdesttext.setText("Source node: "+sourceNode+"\nDestination Node: "+destinationNode);
                     Toast.makeText(getApplicationContext(), "Destination Selected : " + destinationNode,Toast.LENGTH_LONG).show();
                 }else{
                     isDestinationNodeSelected = (posdest == 1);
@@ -146,6 +142,12 @@ public class JoinNode extends AppCompatActivity {
         startActivityForResult(distReaderIntent,Helper.GET_DIST_REQUEST_CODE);
     }
 
+    public void onCreateNodeButtonClick(View view){
+        onSaveInstanceState(out);
+        Intent createNodeIntenet = new Intent(this, CreateNode.class);
+        startActivityForResult(createNodeIntenet,Helper.CREATE_NODE_REQUEST_CODE);
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == Helper.GET_MAGNETOMETER_REQUEST_CODE) {
@@ -160,6 +162,12 @@ public class JoinNode extends AppCompatActivity {
                 distreading = data.getIntExtra(Helper.Dist, -1);
                 onRestoreInstanceState(out);
                 Toast.makeText(getApplicationContext(), "Source Selected : " + sourceNode+" and Destination Selected : "+destinationNode , Toast.LENGTH_LONG).show();
+            }
+        }
+        if(requestCode == Helper.CREATE_NODE_REQUEST_CODE) {
+            if(resultCode == RESULT_OK){
+                onRestoreInstanceState(out);
+                this.onResume();
             }
         }
     }
