@@ -244,6 +244,9 @@ public class Navigation extends AppCompatActivity {
             RSSICriteriaFulfilled = false;
             startRouting(currentIndex++);
         }
+        if(distanceCriteriaFulfilled){
+            startRouting(currentIndex++);
+        }
 
     }
 

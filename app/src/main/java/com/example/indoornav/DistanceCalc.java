@@ -12,6 +12,8 @@ public class DistanceCalc extends IntentService implements SensorEventListener {
 
     private double prevY;
     private float[] gravity = new float[3];
+    private boolean ignore;
+    private int countdown;
 
     protected float[] lowPassFilter( float[] input, float[] output ) {
         if ( output == null ) return input;
@@ -30,7 +32,14 @@ public class DistanceCalc extends IntentService implements SensorEventListener {
             gravity[1] = smoothed[1];
             gravity[2] = smoothed[2];
             double threshold = 0.64;
-            if(Math.abs(prevY - gravity[1]) > threshold){
+            if(ignore) {
+                countdown--;
+                ignore = (countdown >= 0);
+            }
+            else
+                countdown = 22;
+            if((Math.abs(prevY - gravity[1]) > threshold) && !ignore){
+                ignore = true;
                 Intent intent1 = new Intent("DistanceCalc");
                 sendBroadcast(intent1);
             }
@@ -51,5 +60,7 @@ public class DistanceCalc extends IntentService implements SensorEventListener {
         assert sensorManager != null;
         Sensor sensorGravity = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, sensorGravity, SensorManager.SENSOR_DELAY_NORMAL);
+        ignore = true;
+        countdown = 5;
     }
 }
