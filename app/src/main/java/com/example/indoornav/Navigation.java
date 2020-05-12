@@ -38,8 +38,13 @@ public class Navigation extends AppCompatActivity {
     private float distanceToNextNode;
     private float totaldistance;
     private Map<String, Integer> RSSIDataMap = null;
-    private Map<String, String> RSSISSIDs = null;
-    private Boolean isRSSIDataSet = false;
+    private long lastRSSIReadingTimestamp = (-1);
+    private Node sourceNode;
+    private Node destinationNode;
+    private boolean distanceCriteriaFulfilled = false;
+    private boolean RSSICriteriaFulfilled = false;
+    private int CALL_BY_DISTANCE = 0;
+    private int CALL_BY_RSSI = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +155,7 @@ public class Navigation extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             getRSSIData(intent);
-            checkCondition();
+            checkCondition(CALL_BY_RSSI);
         }
     };
 
@@ -158,19 +163,13 @@ public class Navigation extends AppCompatActivity {
         Bundle extras = intent.getExtras();
         assert extras != null;
         if((System.currentTimeMillis() - extras.getLong(Helper.TimeStamp))/1000 < 10) {
-            RSSISSIDs = new HashMap<>();
             RSSIDataMap = new HashMap<>();
             int[] RSSI = extras.getIntArray(Helper.RSSI);
             String[] BSSID = extras.getStringArray(Helper.BSSID);
-            String[] SSID = extras.getStringArray(Helper.SSID);
-            assert RSSI != null;
             for (int i = 0; i < RSSI.length; i++) {
-                assert BSSID != null;
-                assert SSID != null;
-                RSSISSIDs.put(BSSID[i], SSID[i]);
                 RSSIDataMap.put(BSSID[i], RSSI[i]);
             }
-            isRSSIDataSet = true;
+            lastRSSIReadingTimestamp = System.currentTimeMillis();
         }
     }
 
@@ -178,9 +177,7 @@ public class Navigation extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             distanceToNextNode-=height*0.45;
-            if(distanceToNextNode<=0){              //change it to 10 percent threshold
-                startRouting(currentIndex++);
-            }
+            checkCondition(CALL_BY_DISTANCE);
         }
     };
 
@@ -198,13 +195,23 @@ public class Navigation extends AppCompatActivity {
         }
     };
 
-    private boolean compareWifi(Map<String, Integer> wifi){
+    private boolean compareWifi(Map<String, Integer> nodeRSSIDetails,Map<String, Integer> currentRSSIDetails){
+        for(Map.Entry RSSIDetails:currentRSSIDetails.entrySet()){
+            String BSSID = String.valueOf(RSSIDetails.getKey());
+            int level = (int) RSSIDetails.getValue();
+            if(nodeRSSIDetails.containsKey(BSSID)){
+                if(Math.abs(level - nodeRSSIDetails.get(BSSID))>0.1*nodeRSSIDetails.get(BSSID)){
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
+    /*
     private void checkCondition(){
         if(distanceToNextNode <= 0.05*totaldistance){
-            if(isRSSIDataSet){
+            if((System.currentTimeMillis() - lastRSSIReadingTimestamp)/1000 < 10){
                 //Compare RSSI values and start routing for next pair of nodes
                 Map<String, Integer> wifi = null;
                 String nextnode = shortestPath.get(currentIndex).getEn();
@@ -219,6 +226,25 @@ public class Navigation extends AppCompatActivity {
                 }
             }
         }
+    }*/
+
+    private void checkCondition(int callFrom){
+        if(callFrom == CALL_BY_DISTANCE) {
+            if (distanceToNextNode <= 0.05 * totaldistance) {
+                distanceCriteriaFulfilled = true;
+            }
+        }else if(callFrom == CALL_BY_RSSI){
+            if(compareWifi(destinationNode.getWifi(), RSSIDataMap)){
+                RSSICriteriaFulfilled = true;
+            }
+        }
+
+        if(distanceCriteriaFulfilled && RSSICriteriaFulfilled){
+            distanceCriteriaFulfilled = false;
+            RSSICriteriaFulfilled = false;
+            startRouting(currentIndex++);
+        }
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -233,6 +259,16 @@ public class Navigation extends AppCompatActivity {
         }else {
             distanceToNextNode = shortestPath.get(currentIndex).getDistance();
             totaldistance = distanceToNextNode;
+            sourceNode = getNode(shortestPath.get(currentIndex).getSt());
+            destinationNode = getNode(shortestPath.get(currentIndex).getEn());
         }
+    }
+
+    private Node getNode(String nodeName){
+        for(Node node:graph.getNodes()){
+            if(nodeName.equals(node.getNodeName()))
+                return node;
+        }
+        return null;
     }
 }
