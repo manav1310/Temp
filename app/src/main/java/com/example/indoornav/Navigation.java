@@ -12,6 +12,9 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,7 +33,6 @@ public class Navigation extends AppCompatActivity {
     private ImageView compassimage;
     TextView DegreeTV;
     private float DegreeStart = 0f;
-//    private double threshold;
 //    private int distance;
     private ArrayList<Edge> shortestPath;
     private int currentIndex;
@@ -46,6 +48,13 @@ public class Navigation extends AppCompatActivity {
         height = parseInt(Objects.requireNonNull(intent.getStringExtra(Helper.Height)));
         compassimage = findViewById(R.id.CompassImage);
         DegreeTV = findViewById(R.id.DegreeTextView);
+        FloatingActionButton fab = findViewById(R.id.sync);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startRouting(currentIndex++);
+            }
+        });
         completeRouting();
     }
 
