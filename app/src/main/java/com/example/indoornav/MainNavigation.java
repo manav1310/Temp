@@ -25,6 +25,7 @@ public class MainNavigation extends AppCompatActivity {
     private Graph graph = null;
     private String mapname;
     private Integer height = 0;
+    private String heightstr;
     private String sourceNodeName;
     private String destinationNodeName;
     private Boolean isSourceNameSelected = false;
@@ -169,12 +170,12 @@ public class MainNavigation extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Enter Height First",Toast.LENGTH_SHORT).show();
                 return;
             }
+            heightstr = Integer.toString(height);
             Intent intent = new Intent(this, Navigation.class);
-            intent.putExtra(Helper.Height, height);
+            intent.putExtra(Helper.Height, heightstr);
             intent.putExtra(Helper.SourceNodeName, sourceNodeName);
             intent.putExtra(Helper.DestinationNodeName, destinationNodeName);
             intent.putExtra(Helper.mapname, mapname);
-            intent.putExtra(Helper.Height, height);
             startActivity(intent);
         }else if(!isSourceNameSelected){
             Toast.makeText(getApplicationContext(), "Select Source Node",Toast.LENGTH_SHORT).show();

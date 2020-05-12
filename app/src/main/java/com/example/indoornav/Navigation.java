@@ -33,7 +33,6 @@ public class Navigation extends AppCompatActivity {
     private ImageView compassimage;
     TextView DegreeTV;
     private float DegreeStart = 0f;
-//    private int distance;
     private ArrayList<Edge> shortestPath;
     private int currentIndex;
     private float distanceToNextNode;
