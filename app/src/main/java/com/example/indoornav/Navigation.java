@@ -36,6 +36,10 @@ public class Navigation extends AppCompatActivity {
     private ArrayList<Edge> shortestPath;
     private int currentIndex;
     private float distanceToNextNode;
+    private float totaldistance;
+    private Map<String, Integer> RSSIDataMap = null;
+    private Map<String, String> RSSISSIDs = null;
+    private Boolean isRSSIDataSet = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +93,8 @@ public class Navigation extends AppCompatActivity {
         registerReceiver(DistanceBroadcastReceiver, new IntentFilter("DistanceCalc"));
         startService(new Intent(this, MagRead.class));
         registerReceiver(MagnetometerReceiver, new IntentFilter("MagRead"));
+        startService(new Intent(this, RSSICalculator.class));
+        registerReceiver(RSSIBroadcastReceiver, new IntentFilter(Helper.RSSICalculator_Broadcast));
         startRouting(0);
     }
 
@@ -140,6 +146,34 @@ public class Navigation extends AppCompatActivity {
         return result;
     }
 
+    private BroadcastReceiver RSSIBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            getRSSIData(intent);
+            checkCondition();
+        }
+    };
+
+    private void getRSSIData(Intent intent){
+        Bundle extras = intent.getExtras();
+        assert extras != null;
+        if((System.currentTimeMillis() - extras.getLong(Helper.TimeStamp))/1000 < 10) {
+            RSSISSIDs = new HashMap<>();
+            RSSIDataMap = new HashMap<>();
+            int[] RSSI = extras.getIntArray(Helper.RSSI);
+            String[] BSSID = extras.getStringArray(Helper.BSSID);
+            String[] SSID = extras.getStringArray(Helper.SSID);
+            assert RSSI != null;
+            for (int i = 0; i < RSSI.length; i++) {
+                assert BSSID != null;
+                assert SSID != null;
+                RSSISSIDs.put(BSSID[i], SSID[i]);
+                RSSIDataMap.put(BSSID[i], RSSI[i]);
+            }
+            isRSSIDataSet = true;
+        }
+    }
+
     private BroadcastReceiver DistanceBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -164,6 +198,29 @@ public class Navigation extends AppCompatActivity {
         }
     };
 
+    private boolean compareWifi(Map<String, Integer> wifi){
+        return true;
+    }
+
+    private void checkCondition(){
+        if(distanceToNextNode <= 0.05*totaldistance){
+            if(isRSSIDataSet){
+                //Compare RSSI values and start routing for next pair of nodes
+                Map<String, Integer> wifi = null;
+                String nextnode = shortestPath.get(currentIndex).getEn();
+                ArrayList<Node> nodes = graph.getNodes();
+                for(Node i : nodes){
+                    if(i.getNodeName().equals(nextnode)){
+                        wifi = i.getWifi();
+                    }
+                }
+                if(compareWifi(wifi)){
+                    startRouting(currentIndex++);
+                }
+            }
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     protected void startRouting(int currentIndex) {
         if(currentIndex==shortestPath.size()){
@@ -175,6 +232,7 @@ public class Navigation extends AppCompatActivity {
             DegreeTV.setText("Routing completed");
         }else {
             distanceToNextNode = shortestPath.get(currentIndex).getDistance();
+            totaldistance = distanceToNextNode;
         }
     }
 }
