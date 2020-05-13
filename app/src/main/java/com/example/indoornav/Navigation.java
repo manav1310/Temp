@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -45,6 +46,7 @@ public class Navigation extends AppCompatActivity {
     private boolean RSSICriteriaFulfilled = false;
     private int CALL_BY_DISTANCE = 0;
     private int CALL_BY_RSSI = 1;
+    private boolean serviceRegistered = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,19 +70,17 @@ public class Navigation extends AppCompatActivity {
 
     @Override
     protected void onStop(){
-        stopService(new Intent(this, DistanceCalc.class));
-        unregisterReceiver(DistanceBroadcastReceiver);
-        stopService(new Intent(this, MagRead.class));
-        unregisterReceiver(MagnetometerReceiver);
+        if(serviceRegistered) {
+            unRegisterServices();
+        }
         super.onStop();
     }
 
     @Override
     protected void onDestroy(){
-        stopService(new Intent(this, DistanceCalc.class));
-        unregisterReceiver(DistanceBroadcastReceiver);
-        stopService(new Intent(this, MagRead.class));
-        unregisterReceiver(MagnetometerReceiver);
+        if(serviceRegistered) {
+            unRegisterServices();
+        }
         super.onDestroy();
     }
 
@@ -95,11 +95,12 @@ public class Navigation extends AppCompatActivity {
         shortestPath = getShortestPath();
         currentIndex = 0;
         startService(new Intent(this, DistanceCalc.class));
-        registerReceiver(DistanceBroadcastReceiver, new IntentFilter("DistanceCalc"));
+        registerReceiver(DistanceBroadcastReceiver, new IntentFilter(Helper.DistanceCalculator_Broadcast));
         startService(new Intent(this, MagRead.class));
-        registerReceiver(MagnetometerReceiver, new IntentFilter("MagRead"));
+        registerReceiver(MagnetometerReceiver, new IntentFilter(Helper.Magnetometer_Broadcast));
         startService(new Intent(this, RSSICalculator.class));
         registerReceiver(RSSIBroadcastReceiver, new IntentFilter(Helper.RSSICalculator_Broadcast));
+        serviceRegistered = true;
         startRouting(0);
     }
 
@@ -161,7 +162,6 @@ public class Navigation extends AppCompatActivity {
 
     private void getRSSIData(Intent intent){
         Bundle extras = intent.getExtras();
-        assert extras != null;
         if((System.currentTimeMillis() - extras.getLong(Helper.TimeStamp))/1000 < 10) {
             RSSIDataMap = new HashMap<>();
             int[] RSSI = extras.getIntArray(Helper.RSSI);
@@ -176,7 +176,7 @@ public class Navigation extends AppCompatActivity {
     private BroadcastReceiver DistanceBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            distanceToNextNode-=height*0.45;
+            distanceToNextNode-=height*0.415;
             checkCondition(CALL_BY_DISTANCE);
         }
     };
@@ -196,11 +196,12 @@ public class Navigation extends AppCompatActivity {
     };
 
     private boolean compareWifi(Map<String, Integer> nodeRSSIDetails,Map<String, Integer> currentRSSIDetails){
+        Log.d("node reading",nodeRSSIDetails.toString());
+        Log.d("actual rssi reading",currentRSSIDetails.toString());
         for(Map.Entry RSSIDetails:currentRSSIDetails.entrySet()){
             String BSSID = String.valueOf(RSSIDetails.getKey());
-            int level = (int) RSSIDetails.getValue();
             if(nodeRSSIDetails.containsKey(BSSID)){
-                if(Math.abs(level - nodeRSSIDetails.get(BSSID))>0.1*nodeRSSIDetails.get(BSSID)){
+                if(Math.abs((int) RSSIDetails.getValue() - nodeRSSIDetails.get(BSSID))>0.1*nodeRSSIDetails.get(BSSID)){
                     return false;
                 }
             }
@@ -244,19 +245,19 @@ public class Navigation extends AppCompatActivity {
             RSSICriteriaFulfilled = false;
             startRouting(currentIndex++);
         }
-        if(distanceCriteriaFulfilled){
+        /*if(distanceCriteriaFulfilled){
+            distanceCriteriaFulfilled = false;
             startRouting(currentIndex++);
-        }
+        }*/
 
     }
 
     @SuppressLint("SetTextI18n")
     protected void startRouting(int currentIndex) {
         if(currentIndex==shortestPath.size()){
-            stopService(new Intent(this, MagRead.class));
-            unregisterReceiver(MagnetometerReceiver);
-            stopService(new Intent(this, DistanceCalc.class));
-            unregisterReceiver(DistanceBroadcastReceiver);
+            if(serviceRegistered) {
+                unRegisterServices();
+            }
             compassimage.setVisibility(View.INVISIBLE);
             DegreeTV.setText("Routing completed");
         }else {
@@ -264,7 +265,18 @@ public class Navigation extends AppCompatActivity {
             totaldistance = distanceToNextNode;
             sourceNode = getNode(shortestPath.get(currentIndex).getSt());
             destinationNode = getNode(shortestPath.get(currentIndex).getEn());
+            Log.d("shortest path",sourceNode.getNodeName() + "\t"+destinationNode.getNodeName());
         }
+    }
+
+    private void unRegisterServices(){
+        stopService(new Intent(this, MagRead.class));
+        unregisterReceiver(MagnetometerReceiver);
+        stopService(new Intent(this, DistanceCalc.class));
+        unregisterReceiver(DistanceBroadcastReceiver);
+        stopService(new Intent(this, RSSICalculator.class));
+        unregisterReceiver(RSSIBroadcastReceiver);
+        serviceRegistered = false;
     }
 
     private Node getNode(String nodeName){

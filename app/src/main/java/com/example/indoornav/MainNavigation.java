@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainNavigation extends AppCompatActivity {
 
@@ -42,7 +43,6 @@ public class MainNavigation extends AppCompatActivity {
     @Override
     protected void onResume(){
         maps = new ArrayList<>();
-        maps.add("Select");
 
         FileInputStream fis = null;
         try {
@@ -67,6 +67,10 @@ public class MainNavigation extends AppCompatActivity {
                 ;
             }
         }
+
+        Collections.sort(maps);
+        maps.add(0,"Select");
+
         sourceNodeSpinner = findViewById(R.id.NavSourceNodeSpinner);
         destinationNodeSpinner = findViewById(R.id.NavDestNodeSpinner);
 
@@ -106,12 +110,13 @@ public class MainNavigation extends AppCompatActivity {
 
     private void updateNodesSpinner(){
         final ArrayList<String> nodesNames = new ArrayList<>();
-        nodesNames.add("Select");
         for(Node node : graph.getNodes()){
             if(!node.getBreadcrumb()) {
                 nodesNames.add(node.getNodeName());
             }
         }
+        Collections.sort(nodesNames);
+        nodesNames.add(0,"Select");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_singlechoice,nodesNames);
         dataAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
         sourceNodeSpinner.setAdapter(dataAdapter);

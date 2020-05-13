@@ -27,7 +27,7 @@ public class MagRead extends IntentService implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         int degree = Math.round(event.values[0]);
-        Intent intent = new Intent("MagRead");
+        Intent intent = new Intent(Helper.Magnetometer_Broadcast);
         intent.putExtra("Degree", degree);
         sendBroadcast(intent);
     }

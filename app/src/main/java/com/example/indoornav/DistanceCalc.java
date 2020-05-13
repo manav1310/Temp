@@ -40,7 +40,7 @@ public class DistanceCalc extends IntentService implements SensorEventListener {
                 countdown = 22;
             if((Math.abs(prevY - gravity[1]) > threshold) && !ignore){
                 ignore = true;
-                Intent intent1 = new Intent("DistanceCalc");
+                Intent intent1 = new Intent(Helper.DistanceCalculator_Broadcast);
                 sendBroadcast(intent1);
             }
             prevY = gravity[1];

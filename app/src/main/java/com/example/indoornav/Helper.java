@@ -12,6 +12,8 @@ public class Helper {
     public static final String RSSI                         = "RSSI";
     public static final String TimeStamp                    = "TimeStamp";
     public static final String RSSICalculator_Broadcast     = "RSSSICalculator";
+    public static final String DistanceCalculator_Broadcast = "DistanceCalculator";
+    public static final String Magnetometer_Broadcast       = "MagnetometerReader";
     public static final String MapNamesFileList             = "MapNamesFileList";
     public static final String SourceNodeName               = "SourceNodeName";
     public static final String DestinationNodeName          = "DestinationNodeName";

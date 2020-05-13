@@ -12,6 +12,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class JoinNode extends AppCompatActivity {
@@ -57,12 +59,11 @@ public class JoinNode extends AppCompatActivity {
     @Override
     public void onResume(){
         List<String> nodes = new ArrayList<>();
-        nodes.add(0,"Select");
         for( Node node: Graph.getInstance().getNodes()){
-            if(!node.getBreadcrumb()) {
-                nodes.add(node.getNodeName());
-            }
+            nodes.add(node.getNodeName());
         }
+        Collections.sort(nodes);
+        nodes.add(0,"Select");
         Spinner firstNodeSpinner = findViewById(R.id.StartNodeSpinner);
         secondNodeSpinner = findViewById(R.id.DestinationNodeSpinner);
 
@@ -154,14 +155,14 @@ public class JoinNode extends AppCompatActivity {
             if(resultCode==RESULT_OK) {
                 magnetometerReading = data.getIntExtra(Helper.Magnetometer, -1);
                 onRestoreInstanceState(out);
-                Toast.makeText(getApplicationContext(), "Source Selected : " + sourceNode+" and Destination Selected : "+destinationNode , Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Source Selected : " + sourceNode+"\nDestination Selected : "+destinationNode +"\nMagnetometer Reading : "+magnetometerReading, Toast.LENGTH_SHORT).show();
             }
         }
         if(requestCode == Helper.GET_DIST_REQUEST_CODE) {
             if(resultCode==RESULT_OK) {
                 distreading = data.getIntExtra(Helper.Dist, -1);
                 onRestoreInstanceState(out);
-                Toast.makeText(getApplicationContext(), "Source Selected : " + sourceNode+" and Destination Selected : "+destinationNode , Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Source Selected : " + sourceNode+"\nDestination Selected : "+destinationNode + "\nDistance"+distreading, Toast.LENGTH_LONG).show();
             }
         }
         if(requestCode == Helper.CREATE_NODE_REQUEST_CODE) {
