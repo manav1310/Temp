@@ -196,16 +196,24 @@ public class Navigation extends AppCompatActivity {
     };
 
     private boolean compareWifi(Map<String, Integer> nodeRSSIDetails,Map<String, Integer> currentRSSIDetails){
-        Log.d("node reading",nodeRSSIDetails.toString());
-        Log.d("actual rssi reading",currentRSSIDetails.toString());
+        //TODO remove
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(nodeRSSIDetails.toString());
+        stringBuilder.append("\n");
+        stringBuilder.append(currentRSSIDetails.toString());
+        stringBuilder.append("\n");
         for(Map.Entry RSSIDetails:currentRSSIDetails.entrySet()){
             String BSSID = String.valueOf(RSSIDetails.getKey());
             if(nodeRSSIDetails.containsKey(BSSID)){
+                //TODO remove
+                stringBuilder.append(Math.abs((int) RSSIDetails.getValue() - nodeRSSIDetails.get(BSSID))).append(" : ").append(0.1*nodeRSSIDetails.get(BSSID));
                 if(Math.abs((int) RSSIDetails.getValue() - nodeRSSIDetails.get(BSSID))>0.1*nodeRSSIDetails.get(BSSID)){
+                    ((TextView)findViewById(R.id.tempTextview)).setText(stringBuilder);
                     return false;
                 }
             }
         }
+        ((TextView)findViewById(R.id.tempTextview)).setText(stringBuilder);
         return true;
     }
 

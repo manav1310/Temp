@@ -68,7 +68,7 @@ public class MainMapping extends AppCompatActivity implements AdapterView.OnItem
             }
         }
         Collections.sort(maps);
-        maps.add("Select");
+        maps.add(0,"Select");
         Spinner spinner = findViewById(R.id.LoadMapSpinner);
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_singlechoice, maps);
         dataAdapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
