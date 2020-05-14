@@ -47,6 +47,8 @@ public class Navigation extends AppCompatActivity {
     private int CALL_BY_DISTANCE = 0;
     private int CALL_BY_RSSI = 1;
     private boolean serviceRegistered = false;
+    TextView intersrc;
+    TextView interdes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,8 @@ public class Navigation extends AppCompatActivity {
         height = parseInt(Objects.requireNonNull(intent.getStringExtra(Helper.Height)));
         compassimage = findViewById(R.id.CompassImage);
         DegreeTV = findViewById(R.id.DegreeTextView);
+        intersrc = findViewById(R.id.intersrc);
+        interdes = findViewById(R.id.interdes);
         FloatingActionButton fab = findViewById(R.id.sync);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -273,6 +277,8 @@ public class Navigation extends AppCompatActivity {
             totaldistance = distanceToNextNode;
             sourceNode = getNode(shortestPath.get(currentIndex).getSt());
             destinationNode = getNode(shortestPath.get(currentIndex).getEn());
+            intersrc.setText(sourceNode.getNodeName());
+            interdes.setText(destinationNode.getNodeName());
             Log.d("shortest path",sourceNode.getNodeName() + "\t"+destinationNode.getNodeName());
         }
     }
